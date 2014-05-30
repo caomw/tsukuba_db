@@ -1,17 +1,16 @@
 #ifndef TSUKUBA_DB_H_
 #define TSUKUBA_DB_H_
 
+#include <opencv2/core/core.hpp>
+
 #include <string>
+#include <vector>
 
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
-
-namespace cv {
-class Mat;
-}
 
 namespace tsukuba {
 
@@ -73,6 +72,26 @@ class TsukubaStereoDepth : public TsukubaStereoData {
   DISALLOW_COPY_AND_ASSIGN(TsukubaStereoDepth);
 };
 
+class TsukubaCameraTrack {
+ public:
+  TsukubaCameraTrack(const int size,
+                     const std::string &db_path);
+
+  ~TsukubaCameraTrack();
+
+  const cv::Vec3d   &pos(int idx) { return m_pos[idx]; }
+  const cv::Matx33d &rot(int idx) { return m_rot[idx]; }
+
+ protected:
+  void convert(int idx, const std::vector<double> &number);
+
+ private:
+  std::vector<cv::Vec3d>   m_pos;
+  std::vector<cv::Matx33d> m_rot;
+
+  DISALLOW_COPY_AND_ASSIGN(TsukubaCameraTrack);
+};
+
 class DB {
  public:
   DB(const std::string &path,
@@ -93,6 +112,9 @@ class DB {
 
   // Groundtruth - Depth map
   TsukubaStereoDepth depth;
+
+  // Camera tracks
+  TsukubaCameraTrack cam;
 
   int size() { return m_size; }
   const std::string &path() { return m_path; }

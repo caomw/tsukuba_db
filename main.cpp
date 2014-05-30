@@ -35,6 +35,9 @@ int main(int argc, char **argv) {
   cv::imshow("test", tmp);
   cv::waitKey(0);
 
+  cout << "pos: " << cv::Mat(db.cam.pos(1799)) << std::endl;
+  cout << "rot: " << cv::Mat(db.cam.rot(1799)) << std::endl;
+
   return 0;
 }
 
